@@ -17,7 +17,8 @@ https://pytorch.org/get-started/locally/
 conda install pytorch torchvision cudatoolkit=10.2 -c pytorch
 - Kornia:
 https://kornia.github.io/
-pip install kornia
+conda install -c conda-forge kornia 
+(careful here, as the regular pip install kornia won't work with the BYOL we use...)
 - umap:
 https://umap-learn.readthedocs.io/en/latest/
 conda install -c conda-forge umap-learn
@@ -25,4 +26,13 @@ conda install -c conda-forge umap-learn
 
 Make sure you have the following Grasshopper plugins installed (also on the compute server - get them from Food4Rhino):
 - cPython
+- Ladybug/Honeybee (Legacy version)
+- Pufferfish
 
+Then follow the Appserver set up:
+https://github.com/mcneel/compute.rhino3d.appserver/blob/main/docs/heroku.md
+
+and you're good to go!! :)
+ours is here:
+
+https://layout5.herokuapp.com/example/
