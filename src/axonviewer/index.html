@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Axon Viewer</title>
+    <!-- CSS Style -->
+    <link rel="stylesheet" href="axonViewer.css">
+    <link rel="stylesheet" href="contextMenu.css">
+
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    
+    <!-- JS Code -->
+    <script type="module" src="axonViewer.js"></script>
+    <script type="module" src="contextMenu.js"></script>
+  </head>
+  
+  <body>
+    <!-- Draggable User Interface -->
+    <div id="contextMenu">
+      <i id="closeMenu" class="material-icons">highlight_off</i>
+      <p class="inputLabel">Displacement (X,Y,Z)</p>
+      <div id="numberGroup">
+        <input type="number" class="numberInput" id="X" step="0.02"/>
+        <input type="number" class="numberInput" id="Y" step="0.02"/>
+        <input type="number" class="numberInput" id="Z" step="0.02"/>
+      </div>
+      <hr/>
+      <p class="inputLabel">Max Explode</p>
+      <input type="range" id="maxExplode" min="0" max="800"/>
+      <hr/>
+      <p class="inputLabel">Display Color</p>
+      <input type="color" id="modelColor">
+    </div>
+
+    <!-- Canvas -->
+    <canvas id="c"></canvas>
+
+    <!-- Canvas -->
+    <div id="controls">
+      <input type="range" id="globalDisplacement" min="0" max="100" value="0"/>
+      <button id="screenshot"><i class="material-icons" style="margin:auto;">photo_camera</i></button>
+    </div>
+
+
+    <!-- Download Link -->
+    <a id="downloadAnchorElem" style="display:none"></a>
+  </body>
+</html>
