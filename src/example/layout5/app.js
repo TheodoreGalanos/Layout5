@@ -193,7 +193,7 @@ function init () {
 var animate = function () {
   requestAnimationFrame( animate )
   controls.update()
-  //controlsLeft.update()
+  controlsLeft.update()
   renderer.render( scene, camera )
   rendererLeft.render( sceneLeft, cameraOrtho )
 }
