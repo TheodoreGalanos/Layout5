@@ -10,7 +10,7 @@ data.inputs = {
 }
 
 let _threeMesh, _threeMaterial, rhino
-let ratio = 0.33;
+let ratio = 0.25;
 
 rhino3dm().then(async m => {
   console.log('Loaded rhino3dm.')
@@ -129,7 +129,7 @@ function init () {
 
   rendererLeft = new THREE.WebGLRenderer({antialias: true})
   rendererLeft.setPixelRatio( window.devicePixelRatio )
-  rendererLeft.setSize( ratio * window.innerWidth, ratio * window.innerHeight )
+  rendererLeft.setSize( ratio * window.innerWidth, ratio * window.innerWidth )
   //rendererLeft.setViewport(0, window.innerHeight/2, window.innerWidth, window.innerHeight/2 )
 
     let canvas = document.getElementById('canvas')
@@ -146,7 +146,7 @@ function init () {
   
 
   sceneLeft = new THREE.Scene()
-  sceneLeft.background = new THREE.Color(0.5,1,0.5)
+  sceneLeft.background = new THREE.Color(1,1,1)
 
   
 
@@ -165,7 +165,7 @@ function init () {
   controlsLeft = new THREE.OrbitControls(cameraOrtho, rendererLeft.domElement);
   controlsLeft.target.set( 0, 0, 0 ); // view direction perpendicular to XY-plane
   controlsLeft.enableRotate = false;
-  controlsLeft.enableZoom = true; // optional
+  //controlsLeft.enableZoom = true; // optional
   controlsLeft.update();
 
   // Scene bounding box
@@ -184,13 +184,16 @@ function init () {
   window.addEventListener( 'pointerdown', onMouseDown, false )
   window.addEventListener( 'pointerup', onMouseClick, false )
 
+  // Screenshot
+  const elem = document.querySelector('#screenshot').addEventListener('click', screenshot);
+
   animate()
 }
 
 var animate = function () {
   requestAnimationFrame( animate )
   controls.update()
-  controlsLeft.update()
+  //controlsLeft.update()
   renderer.render( scene, camera )
   rendererLeft.render( sceneLeft, cameraOrtho )
 }
@@ -201,7 +204,7 @@ function onWindowResize() {
   cameraOrtho.aspect = window.innerWidth / window.innerHeight
   cameraOrtho.updateProjectionMatrix()
   renderer.setSize((1-ratio)* window.innerWidth, (1-ratio)*window.innerHeight )
-  rendererLeft.setSize( ratio*window.innerWidth, ratio*window.innerHeight )
+  rendererLeft.setSize( ratio*window.innerWidth, ratio*window.innerWidth )
   //renderer.setViewport(0, -1, window.innerWidth, window.innerHeight/2 )
   //rendererLeft.setViewport(0, window.innerHeight/2, window.innerWidth, window.innerHeight/2 )
   animate()
@@ -244,10 +247,6 @@ function onMouseClick(e) {
   var corner1 = new THREE.Vector3 (mouseDown.x - sizeX, mouseDown.y, 0);
   var corner2 = new THREE.Vector3 (mouseDown.x - sizeX, mouseDown.y - sizeY, 0);
   var corner3 = new THREE.Vector3 (mouseDown.x, mouseDown.y - sizeY, 0);
-  // var corner0 = new THREE.Vector3 (-0.5, -0.5, 0);
-  // var corner1 = new THREE.Vector3 (0.5, -0.5, 0);
-  // var corner2 = new THREE.Vector3 (0.5, 0.5, 0);
-  // var corner3 = new THREE.Vector3 (-0.5, 0.5, 0);
 
   var shape = new THREE.CurvePath();
   shape.add(new THREE.LineCurve3(corner0, corner1));
@@ -280,3 +279,25 @@ function meshToThreejs (mesh, material) {
   var geometry = loader.parse(mesh.toThreejsJSON())
   return new THREE.Mesh(geometry, material)
 }
+
+function screenshot(e) {
+  //render();
+  rendererLeft.render( sceneLeft, cameraOrtho )
+  let canvasTop = rendererLeft.domElement;
+  canvasTop.toBlob((blob) => {
+    saveBlob(blob, `screencapture-layout-512x512.png`);
+  });
+}
+
+// https://threejsfundamentals.org/threejs/lessons/threejs-tips.html#screenshot
+const saveBlob = (function() {
+  const a = document.createElement('a');
+  document.body.appendChild(a);
+  a.style.display = 'none';
+  return function saveData(blob, fileName) {
+     const url = window.URL.createObjectURL(blob);
+     a.href = url;
+     a.download = fileName;
+     a.click();
+  };
+}());
