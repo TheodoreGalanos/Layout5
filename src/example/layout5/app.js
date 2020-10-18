@@ -111,13 +111,14 @@ function onSliderChange () {
 
 var scene, sceneLeft, camera, cameraOrtho, renderer, rendererLeft, controls, controlsLeft
 // For hover / selection
-let raycaster, mouse, selection, hover;
+let raycaster, mouse, mouseDown, selection, hover;
 
 function init () {
     // hover / selection                                 
     raycaster = new THREE.Raycaster;
     // Init mouse position so it's not sitting at the center of the screen
     mouse = new THREE.Vector2(-1000);
+    mouseDown = new THREE.Vector2(-1000);
     selection = [];
     hover = {};
 
@@ -151,18 +152,21 @@ function init () {
 
   aspect = canvas.clientWidth / canvas.clientHeight;
   aspectTop = canvasTop.clientWidth / canvasTop.clientHeight;
+  canvasTop.left
 
     // Orthographic Camera
   // https://threejs.org/docs/#api/en/cameras/OrthographicCamera
-  cameraOrtho = new THREE.OrthographicCamera(-aspect, aspect, 1, -1, 0, 20000);
-  cameraOrtho.position.set(0, 0, 100);
+  cameraOrtho = new THREE.OrthographicCamera(-1, 1, 1, -1, 10, 20000);
+  cameraOrtho.position.set(canvasTop.clientWidth/2, canvasTop.clientHeight/2, 10000);
+  //cameraOrtho.target.set(0,0,0);
+  //cameraOrtho.enableRotate = false;
 
   // Orbit Controls
-  // controlsLeft = new THREE.OrbitControls(cameraOrtho, rendererLeft.domElement);
-  // controlsLeft.target.set( 0, 0, 0 ); // view direction perpendicular to XY-plane
-  // controlsLeft.enableRotate = false;
-  // controlsLeft.enableZoom = true; // optional
-  // controlsLeft.update();
+  controlsLeft = new THREE.OrbitControls(cameraOrtho, rendererLeft.domElement);
+  controlsLeft.target.set( 0, 0, 0 ); // view direction perpendicular to XY-plane
+  controlsLeft.enableRotate = false;
+  controlsLeft.enableZoom = true; // optional
+  controlsLeft.update();
 
   // Scene bounding box
   sceneBox = new THREE.Box3();
@@ -176,18 +180,8 @@ function init () {
   camera.position.z = 50;
   //cameraOrtho.position.z = 10;
   
-  
-  
-  
-  
-  
-  
-
-  
-
-
-
   window.addEventListener( 'resize', onWindowResize, false )
+  window.addEventListener( 'pointerdown', onMouseDown, false )
   window.addEventListener( 'pointerup', onMouseClick, false )
 
   animate()
@@ -196,9 +190,9 @@ function init () {
 var animate = function () {
   requestAnimationFrame( animate )
   controls.update()
-  //controlsLeft.update()
+  controlsLeft.update()
   renderer.render( scene, camera )
-  rendererLeft.render( sceneLeft, camera )
+  rendererLeft.render( sceneLeft, cameraOrtho )
 }
   
 function onWindowResize() {
@@ -222,6 +216,16 @@ function getCanvasRelativePosition(event) {
     y: (event.clientY - rect.top ) * canvasTop.height / rect.height,
   };
 }
+function onMouseDown(e) {
+  // prevent menu clicks from causing this to fire
+  if(e.target !== document.querySelector('canvas')) return;
+
+  let canvasTop = rendererLeft.domElement;
+  let pos = getCanvasRelativePosition(e);
+
+  mouseDown.x = (pos.x / canvasTop.width) * 2 - 1;
+  mouseDown.y = (pos.y / canvasTop.height) * -2 + 1;
+}
 
 function onMouseClick(e) {
   // prevent menu clicks from causing this to fire
@@ -232,15 +236,18 @@ function onMouseClick(e) {
 
   mouse.x = (pos.x / canvasTop.width) * 2 - 1;
   mouse.y = (pos.y / canvasTop.height) * -2 + 1;
+
+  var sizeX = mouseDown.x - mouse.x;
+  var sizeY = mouseDown.y - mouse.y;
   
-  var corner0 = new THREE.Vector3 (pos.x, pos.y, 0);
-  var corner1 = new THREE.Vector3 (pos.x+5, pos.y, 0);
-  var corner2 = new THREE.Vector3 (pos.x+5, pos.y+5, 0);
-  var corner3 = new THREE.Vector3 (pos.x, pos.y+5, 0);
-  // var corner0 = new THREE.Vector3 (0, 0, 0);
-  // var corner1 = new THREE.Vector3 (5, 0, 0);
-  // var corner2 = new THREE.Vector3 (5, 5, 0);
-  // var corner3 = new THREE.Vector3 (0, 5, 0);
+  var corner0 = new THREE.Vector3 (mouseDown.x, mouseDown.y, 0);
+  var corner1 = new THREE.Vector3 (mouseDown.x - sizeX, mouseDown.y, 0);
+  var corner2 = new THREE.Vector3 (mouseDown.x - sizeX, mouseDown.y - sizeY, 0);
+  var corner3 = new THREE.Vector3 (mouseDown.x, mouseDown.y - sizeY, 0);
+  // var corner0 = new THREE.Vector3 (-0.5, -0.5, 0);
+  // var corner1 = new THREE.Vector3 (0.5, -0.5, 0);
+  // var corner2 = new THREE.Vector3 (0.5, 0.5, 0);
+  // var corner3 = new THREE.Vector3 (-0.5, 0.5, 0);
 
   var shape = new THREE.CurvePath();
   shape.add(new THREE.LineCurve3(corner0, corner1));
@@ -249,7 +256,7 @@ function onMouseClick(e) {
   shape.add(new THREE.LineCurve3(corner3, corner0));
   console.log("add a rectangle...");
 
-  var geometry = new THREE.TubeGeometry( shape, 64, 1, 8, true );
+  var geometry = new THREE.TubeGeometry( shape, 64, .01, 4, false );
   var material = new THREE.MeshBasicMaterial( { color: 0x5a5a5a } );
   var meshRect = new THREE.Mesh( geometry, material ) ;
   sceneLeft.add(meshRect);
