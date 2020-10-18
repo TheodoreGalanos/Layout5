@@ -1,8 +1,9 @@
 /* eslint no-undef: "off", no-unused-vars: "off" */
 let data = {}
+let state = false;
 data.definition = 'images_to_mesh_matrix.gh'
 data.inputs = {
-  'int_select':document.getElementById('selector').valueAsNumber
+  'bool_refresh':state
   // 'int_k':document.getElementById('clusters').valueAsNumber,
   // 'int_dimension':document.getElementById('dimension').valueAsNumber,
   // 'int_resolution':document.getElementById('resolution').valueAsNumber,
@@ -105,13 +106,14 @@ async function compute(){
  * Called when a slider value changes in the UI. Collect all of the
  * slider values and call compute to solve for a new scene
  */
-function onSliderChange () {
+function onButtonClick () {
   // show spinner
   document.getElementById('loader').style.display = 'block'
-  document.getElementById('label_selector').innerHTML = document.getElementById('selector').valueAsNumber
+  console.log(document.getElementById('btn_update').values);
   // get slider values
+  state = !state
   data.inputs = {
-    'int_select':document.getElementById('selector').valueAsNumber
+    'bool_refresh':state
     // 'int_k':document.getElementById('clusters').valueAsNumber,
     // 'int_dimension':document.getElementById('dimension').valueAsNumber,
     // 'int_resolution':document.getElementById('resolution').valueAsNumber,
