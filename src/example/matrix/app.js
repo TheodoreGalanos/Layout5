@@ -129,7 +129,7 @@ var scene, camera, renderer, controls
 
 function init () {
   scene = new THREE.Scene()
-  scene.background = new THREE.TextureLoader().load( "../../files/layout.png" );//new THREE.Color(1,1,1)
+  scene.background = new THREE.TextureLoader().load( "https://www.dropbox.com/s/67c43t8zyock7oz/11_Mirar_canvas.png" );//new THREE.Color(1,1,1)
   camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 1000 )
 
   renderer = new THREE.WebGLRenderer({antialias: true})
