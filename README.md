@@ -28,6 +28,7 @@ Make sure you have the following Grasshopper plugins installed (also on the comp
 - cPython
 - Ladybug/Honeybee (Legacy version)
 - Pufferfish
+- Human
 
 Then follow the Appserver set up:
 https://github.com/mcneel/compute.rhino3d.appserver/blob/main/docs/heroku.md
