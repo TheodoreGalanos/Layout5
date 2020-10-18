@@ -1,7 +1,7 @@
 /* eslint no-undef: "off", no-unused-vars: "off" */
 let data = {}
 let state = false;
-data.definition = 'images_to_mesh_matrix.gh'
+data.definition = 'matrix_baked_2.gh'
 data.inputs = {
   'bool_refresh':state
   // 'int_k':document.getElementById('clusters').valueAsNumber,
@@ -60,6 +60,8 @@ async function compute(){
     mesh.delete()
     replaceCurrentMesh(threeMesh)
 
+    drawLines();
+
     //process data
     // let cluster_data = responseJson.values[1].InnerTree['{ 0; }'].map(d=>d.data)
     // console.log(cluster_data)
@@ -100,6 +102,44 @@ async function compute(){
   } catch(error){
     console.error(error)
   }
+}
+
+function drawLines(){
+  var material1 = new THREE.LineBasicMaterial( { color: 0x444444 } );
+  var material2 = new THREE.LineBasicMaterial( { color: 0x999999 } );
+
+  var a = 45;
+  var b = 4.5;
+  var n = 10;
+  var p0 = new THREE.Vector3( 0, 0, 0 );
+  var p1 = new THREE.Vector3( a+5, 0, 0 ) ;
+  var p2 = new THREE.Vector3( 0, a+5, 0 ) ;
+
+  var geometry = new THREE.BufferGeometry().setFromPoints( [p0,p1] );
+  var line1 = new THREE.Line( geometry, material1 );
+  scene.add( line1 );
+  var geometry = new THREE.BufferGeometry().setFromPoints( [p0,p2] );
+  var line2 = new THREE.Line( geometry, material1 );
+  scene.add( line2 );
+
+  for(i = 1;i<n+1;i++){
+    var p0 = new THREE.Vector3( i*b, 0, 0 );
+    var p1 = new THREE.Vector3( i*b, a, 0 ) ;
+    var geometry = new THREE.BufferGeometry().setFromPoints( [p0,p1] );
+    var line1 = new THREE.Line( geometry, material2 );
+    scene.add( line1 );
+  }
+
+  for(i = 1;i<n+1;i++){
+    var p0 = new THREE.Vector3( 0, i*b, 0 );
+    var p1 = new THREE.Vector3( a, i*b, 0 ) ;
+    var geometry = new THREE.BufferGeometry().setFromPoints( [p0,p1] );
+    var line1 = new THREE.Line( geometry, material2 );
+    scene.add( line1 );
+  }
+
+  var points = [];
+  renderer.render( scene, camera );
 }
 
 /**
